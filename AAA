@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <title>RumanLOX Vote</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; background: #f9f6ff; }
+    .photo { margin: 20px; width: 260px; border-radius: 14px; box-shadow: 0 0 16px #0002; }
+    .btn { padding: 12px; margin: 6px; border-radius: 8px; background: #d2691e; color: #fff; border: none; cursor: pointer; }
+    ul { text-align: left; margin: 0 auto; max-width: 350px; padding: 0; }
+    li { background: #fff; margin: 4px; border-radius: 6px; padding: 8px; }
+  </style>
+</head>
+<body>
+  <h1>RumanLOX Vote</h1>
+  <img src="photo.jpg" class="photo" alt="Фото">
+  <br>
+  <input type="text" id="name" placeholder="Атыңды жаз">
+  <button class="btn" onclick="vote('Барамын')">Барамын</button>
+  <button class="btn" onclick="vote('Бармаймын')">Бармаймын</button>
+  <button class="btn" onclick="vote('Норм')">Норм</button>
+  <button class="btn" onclick="vote('Ертең келем')">Ертең келем</button>
+  <button class="btn" onclick="vote('Жылап барамын')">Жылап барамын</button>
+  <div id="result"></div>
+  <div>
+    <h2>Барлық жауаптар:</h2>
+    <ul id="results-list"></ul>
+  </div>
+  <script>
+    // Мынау сенің Firebase config-ің
+    var firebaseConfig = {
+      apiKey: "AIzaSyC2gAHY5p3Dtsys4RiEe69-0k2kHDPgMNY",
+      authDomain: "ruman-71746.firebaseapp.com",
+      databaseURL: "https://ruman-71746-default-rtdb.firebaseio.com",
+      projectId: "ruman-71746",
+      storageBucket: "ruman-71746.firebasestorage.app",
+      messagingSenderId: "437707416447",
+      appId: "1:437707416447:web:ca8ee7515729208319f04a",
+      measurementId: "G-ZNHWXX5LK8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.database();
+
+    function vote(choice) {
+      var name = document.getElementById('name').value.trim();
+      if(!name) { alert("Атыңды жаз!"); return; }
+      db.ref("votes/"+name).set(choice);
+      document.getElementById('result').innerText = name + " таңдады: " + choice;
+      document.getElementById('name').value = '';
+    }
+
+    db.ref("votes").on('value', function(snapshot) {
+      var list = document.getElementById('results-list');
+      list.innerHTML = '';
+      snapshot.forEach(function(child) {
+        var li = document.createElement('li');
+        li.textContent = child.key + ": " + child.val();
+        list.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>
